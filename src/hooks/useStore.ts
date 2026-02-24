@@ -117,12 +117,12 @@ export const useMyStore = () => {
     queryKey: ["my_store"],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) return null;
       const { data, error } = await supabase
         .from("stores")
         .select("*")
         .eq("owner_id", user.id)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
