@@ -57,6 +57,7 @@ Sistema completo de catálogo digital com checkout via WhatsApp, painel do lojis
 **Página de Checkout Local**
 
 - Formulário com validação (Zod): Nome, Telefone, Tipo de Entrega (Delivery/Retirada), Endereço completo, Forma de Pagamento
+- Busca automática de endereço via CEP (API ViaCEP) para preenchimento automático de rua, bairro, cidade e estado
 - Cálculo de taxa de entrega (por bairro ou fixa)
 - Resumo do pedido com subtotal, taxa e total
 
@@ -104,10 +105,11 @@ Sistema completo de catálogo digital com checkout via WhatsApp, painel do lojis
 - Ativar/desativar lojas
 - Ver métricas por loja
 
-**Stripe Integrado**
+**Asaas Integrado (Pagamento BR)**
 
-- Planos de assinatura mensal para lojistas
+- Planos de assinatura mensal para lojistas (Pix + Boleto + Cartão)
 - Webhooks para ativar/desativar automaticamente
+- Régua de cobrança automática via WhatsApp/Email
 - Portal do cliente Asaas para gerenciar pagamento
 
 **Loja Demo**
@@ -134,3 +136,11 @@ Sistema completo de catálogo digital com checkout via WhatsApp, painel do lojis
 - **Sistema de cores dinâmico**: cada loja aplica sua `cor_primaria` via CSS variables
 - **Componentes Shadcn/UI** com Tailwind CSS
 - **Sonner** para notificações toast
+
+---
+
+### Fase 7 (Futura): Domínios Customizados
+
+- Permitir lojistas Premium usarem domínio próprio (ex: www.lojadocliente.com.br)
+- Configuração de DNS (CNAME) via painel admin
+- Certificado SSL automático via Lovable
