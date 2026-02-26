@@ -78,7 +78,7 @@ const CartDrawer = ({ open, onClose, store }: CartDrawerProps) => {
                 <span>R$ {total.toFixed(2)}</span>
               </div>
               <Button className="w-full" size="lg" onClick={handleCheckout}>
-                Ir para Checkout
+                Fazer meu Pedido
               </Button>
             </div>
           </>
