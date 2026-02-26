@@ -6,6 +6,7 @@ import StoreHeader from "@/components/store/StoreHeader";
 import CategoryCarousel from "@/components/store/CategoryCarousel";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
+import StoreFooter from "@/components/store/StoreFooter";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -108,6 +109,7 @@ const StoreFront = () => {
         />
       </main>
 
+      <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} store={store} />
     </div>
   );
