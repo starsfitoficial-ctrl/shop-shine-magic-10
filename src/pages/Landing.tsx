@@ -37,7 +37,7 @@ const Landing = () => {
               Começar Agora
             </Button>
           </Link>
-          <Link to="/demo">
+          <Link to="/loja-demo-brasil">
             <Button size="lg" variant="outline" className="text-lg px-8">
               Ver Demo
             </Button>
