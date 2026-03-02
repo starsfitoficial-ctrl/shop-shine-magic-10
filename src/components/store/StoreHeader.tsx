@@ -55,14 +55,6 @@ const StoreHeader = ({ store, searchQuery, onSearchChange, onCartOpen }: StoreHe
         </div>
       </div>
 
-      {/* Legal links */}
-      <div className="border-t bg-secondary/50">
-        <div className="container mx-auto flex gap-4 px-4 py-1.5 text-xs text-muted-foreground">
-          <Link to={`/${store.slug}/politica-de-reembolso`} className="hover:text-foreground">Política de Reembolso</Link>
-          <Link to={`/${store.slug}/termos-de-uso`} className="hover:text-foreground">Termos de Uso</Link>
-          <Link to={`/${store.slug}/contato`} className="hover:text-foreground">Contato</Link>
-        </div>
-      </div>
     </header>
   );
 };
