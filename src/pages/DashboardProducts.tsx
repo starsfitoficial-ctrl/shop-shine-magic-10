@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
+import ProductOptionsManager from "@/components/dashboard/ProductOptionsManager";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -222,6 +223,11 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
         <input type="checkbox" id="featured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
         <Label htmlFor="featured">Produto Destaque</Label>
       </div>
+      {product && (
+        <div className="border-t border-border pt-4">
+          <ProductOptionsManager productId={product.id} />
+        </div>
+      )}
       <Button type="submit" className="w-full" disabled={saving}>{saving ? "Salvando..." : product ? "Atualizar" : "Criar Produto"}</Button>
     </form>
   );
