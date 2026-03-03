@@ -1,22 +1,22 @@
 
 
-## Plano: Criar Usuário Admin Geral
+## Problema
 
-O e-mail `sysgrowth.oficial@gmail.com` ainda não existe no sistema. Precisamos:
+O login redireciona sempre para `/dashboard`. Como o usuário também tem role `store_owner` e criou uma loja, ele vê o painel do lojista. Não há nenhum link para `/admin` na interface — o acesso só funciona digitando a URL manualmente.
 
-### Passo 1 — Cadastrar o usuário
-Você precisa se cadastrar manualmente pela interface:
-1. Acesse `/auth` no preview
-2. Clique em "Criar conta"
-3. Preencha: Nome: `Sulimar - Sys Growth`, E-mail: `sysgrowth.oficial@gmail.com`, Senha: `@Sysgrowth123!`
-4. Confirme o e-mail (se a confirmação estiver ativa)
+## Solução
 
-### Passo 2 — Adicionar role admin
-Após o cadastro, eu executo uma migration SQL para inserir a role `admin` na tabela `user_roles` para o `user_id` recém-criado.
+Duas mudanças simples:
 
-### Alternativa (mais rápida)
-Se preferir, posso tentar criar o usuário diretamente via Edge Function usando a service role key, e em seguida inserir a role admin — tudo automatizado sem precisar cadastrar manualmente.
+### 1. Redirecionar admin para `/admin` após login
 
-### Recomendação
-A alternativa automatizada é mais prática. Após a implementação, basta acessar `/auth`, fazer login com as credenciais acima, e navegar para `/admin`.
+Em `src/pages/Auth.tsx`, após login bem-sucedido, verificar as roles do usuário. Se tiver role `admin`, redirecionar para `/admin` em vez de `/dashboard`.
+
+### 2. Adicionar link "Admin" no header do Dashboard
+
+Em `src/pages/Dashboard.tsx`, adicionar um botão/link condicional no header que só aparece para usuários com `isAdmin`, direcionando para `/admin`. Assim, mesmo que o admin navegue ao dashboard, consegue voltar ao painel admin facilmente.
+
+### 3. Adicionar link "Dashboard" no header do Admin
+
+Em `src/pages/Admin.tsx`, adicionar um link para `/dashboard` no header para que o admin possa alternar entre os dois painéis.
 
