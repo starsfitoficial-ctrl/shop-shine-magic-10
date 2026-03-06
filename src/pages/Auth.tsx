@@ -25,13 +25,13 @@ const Auth = () => {
         const { error, data } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         // Check if user is admin to redirect accordingly
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id);
-        const isAdmin = roles?.some((r) => r.role === "admin");
+        // Use has_role RPC function which is SECURITY DEFINER and bypasses RLS
+        const { data: isAdminResult } = await supabase.rpc("has_role", {
+          _user_id: data.user.id,
+          _role: "admin",
+        });
         toast.success("Login realizado com sucesso!");
-        navigate(isAdmin ? "/admin" : "/dashboard");
+        navigate(isAdminResult ? "/admin" : "/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
