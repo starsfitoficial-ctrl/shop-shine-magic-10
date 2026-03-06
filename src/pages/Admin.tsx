@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Navigate, Link } from "react-router-dom";
-import { Store, Users, DollarSign, LogOut } from "lucide-react";
+import { Store, Users, DollarSign, LogOut, BarChart3 } from "lucide-react";
+import AdminUsers from "@/components/admin/AdminUsers";
+import AdminSubscriptions from "@/components/admin/AdminSubscriptions";
 
 const Admin = () => {
   const { user, loading, signOut, isAdmin } = useAuth();
@@ -36,9 +39,9 @@ const Admin = () => {
   const inactiveStores = (stores?.length ?? 0) - activeStores;
 
   const statusColor: Record<string, string> = {
-    active: "bg-success text-success-foreground",
-    trial: "bg-warning text-warning-foreground",
-    inactive: "bg-destructive text-destructive-foreground",
+    active: "bg-green-500/10 text-green-700 border-green-200",
+    trial: "bg-yellow-500/10 text-yellow-700 border-yellow-200",
+    inactive: "bg-red-500/10 text-red-700 border-red-200",
     expired: "bg-muted text-muted-foreground",
   };
 
@@ -56,58 +59,76 @@ const Admin = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-8">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Lojas Ativas</CardTitle>
-              <Store className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{activeStores}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Lojas Inativas</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{inactiveStores}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total de Cliques</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{totalClicks}</p>
-            </CardContent>
-          </Card>
-        </div>
+      <main className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="overview"><BarChart3 className="mr-1 h-4 w-4" /> Visão Geral</TabsTrigger>
+            <TabsTrigger value="users"><Users className="mr-1 h-4 w-4" /> Usuários</TabsTrigger>
+            <TabsTrigger value="subscriptions"><DollarSign className="mr-1 h-4 w-4" /> Assinaturas</TabsTrigger>
+          </TabsList>
 
-        <Card>
-          <CardHeader><CardTitle>Lojas</CardTitle></CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {stores?.map((s) => (
-                <div key={s.id} className="flex items-center justify-between rounded-md border p-4">
-                  <div>
-                    <p className="font-medium text-foreground">{s.name}</p>
-                    <p className="text-sm text-muted-foreground">/{s.slug}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge className={statusColor[s.subscription_status] || ""}>{s.subscription_status}</Badge>
-                    <Link to={`/${s.slug}`} target="_blank">
-                      <Button variant="outline" size="sm">Ver</Button>
-                    </Link>
-                  </div>
-                </div>
-              ))}
+          <TabsContent value="overview" className="space-y-8">
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Lojas Ativas</CardTitle>
+                  <Store className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{activeStores}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Lojas Inativas</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{inactiveStores}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">Total de Cliques</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{totalClicks}</p>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Lojas</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {stores?.map((s) => (
+                    <div key={s.id} className="flex items-center justify-between rounded-md border p-4">
+                      <div>
+                        <p className="font-medium text-foreground">{s.name}</p>
+                        <p className="text-sm text-muted-foreground">/{s.slug}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge className={statusColor[s.subscription_status] || ""}>{s.subscription_status}</Badge>
+                        <Link to={`/${s.slug}`} target="_blank">
+                          <Button variant="outline" size="sm">Ver</Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users">
+            <AdminUsers />
+          </TabsContent>
+
+          <TabsContent value="subscriptions">
+            <AdminSubscriptions />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
