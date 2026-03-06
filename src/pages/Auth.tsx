@@ -21,10 +21,16 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error, data } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Check if user is admin to redirect accordingly
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", data.user.id);
+        const isAdmin = roles?.some((r) => r.role === "admin");
         toast.success("Login realizado com sucesso!");
-        navigate("/dashboard");
+        navigate(isAdmin ? "/admin" : "/dashboard");
       } else {
         const { error } = await supabase.auth.signUp({
           email,
