@@ -47,7 +47,12 @@ const Admin = () => {
       <header className="border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <h1 className="text-xl font-bold text-foreground">Admin</h1>
-          <Button variant="ghost" size="sm" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard">
+              <Button variant="outline" size="sm"><Store className="mr-1 h-4 w-4" /> Dashboard</Button>
+            </Link>
+            <Button variant="ghost" size="sm" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
+          </div>
         </div>
       </header>
 
