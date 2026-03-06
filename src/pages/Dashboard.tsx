@@ -5,11 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
-import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
-  const { user, loading, signOut, isStoreOwner } = useAuth();
+  const { user, loading, signOut, isStoreOwner, isAdmin } = useAuth();
   const { data: store, isLoading: storeLoading } = useMyStore();
 
   const { data: clickStats } = useQuery({
@@ -70,6 +70,11 @@ const Dashboard = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <h1 className="text-xl font-bold text-foreground">Painel - {store.name}</h1>
           <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link to="/admin">
+                <Button variant="outline" size="sm"><Shield className="mr-1 h-4 w-4" /> Admin</Button>
+              </Link>
+            )}
             <Link to={`/${store.slug}`} target="_blank">
               <Button variant="outline" size="sm">Ver Loja</Button>
             </Link>
