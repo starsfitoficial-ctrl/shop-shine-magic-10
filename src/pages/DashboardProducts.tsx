@@ -24,6 +24,8 @@ const DashboardProducts = () => {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   const { data: products } = useQuery({
     queryKey: ["my_products", store?.id],
