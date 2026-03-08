@@ -5,7 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, ArrowLeft, Share2, Heart, Star } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
