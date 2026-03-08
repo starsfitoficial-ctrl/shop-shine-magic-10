@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMyStore, useStoreCategories } from "@/hooks/useStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Trash2, Plus } from "lucide-react";
+import { ArrowLeft, Trash2, Plus, GripVertical, Pencil, Check, X } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -51,6 +51,16 @@ const DashboardSettings = () => {
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; hasProducts: boolean } | null>(null);
+
+  // Drag state
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  // Inline edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editIcon, setEditIcon] = useState("");
 
   useEffect(() => {
     if (store) {
@@ -106,6 +116,49 @@ const DashboardSettings = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, name, icon }: { id: string; name: string; icon: string }) => {
+      const { error } = await supabase.from("categories").update({ name, icon }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Categoria atualizada!");
+      setEditingId(null);
+      queryClient.invalidateQueries({ queryKey: ["categories", store?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const reorderMutation = useMutation({
+    mutationFn: async (reordered: { id: string; sort_order: number }[]) => {
+      const promises = reordered.map((item) =>
+        supabase.from("categories").update({ sort_order: item.sort_order }).eq("id", item.id)
+      );
+      const results = await Promise.all(promises);
+      const err = results.find((r) => r.error);
+      if (err?.error) throw err.error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories", store?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const handleDragEnd = () => {
+    if (dragItem.current === null || dragOverItem.current === null || dragItem.current === dragOverItem.current) {
+      setDragIdx(null);
+      return;
+    }
+    const reordered = [...categories];
+    const [removed] = reordered.splice(dragItem.current, 1);
+    reordered.splice(dragOverItem.current, 0, removed);
+    const updates = reordered.map((cat, idx) => ({ id: cat.id, sort_order: idx }));
+    reorderMutation.mutate(updates);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setDragIdx(null);
+  };
+
   const handleDeleteClick = async (catId: string, catName: string) => {
     const { count } = await supabase
       .from("products")
@@ -119,6 +172,17 @@ const DashboardSettings = () => {
       deleteCategoryMutation.mutate(deleteTarget.id);
       setDeleteTarget(null);
     }
+  };
+
+  const startEdit = (cat: { id: string; name: string; icon: string | null }) => {
+    setEditingId(cat.id);
+    setEditName(cat.name);
+    setEditIcon(cat.icon || "📦");
+  };
+
+  const saveEdit = () => {
+    if (!editingId || !editName.trim()) return;
+    updateCategoryMutation.mutate({ id: editingId, name: editName.trim(), icon: editIcon.trim() || "📦" });
   };
 
   if (loading) return <div className="flex min-h-screen items-center justify-center">Carregando...</div>;
@@ -219,20 +283,53 @@ const DashboardSettings = () => {
             <CardContent className="space-y-4">
               {categories.length > 0 ? (
                 <div className="space-y-2">
-                  {categories.map((cat) => (
-                    <div key={cat.id} className="flex items-center justify-between rounded-md border border-border bg-muted/50 px-3 py-2">
-                      <span className="flex items-center gap-2 text-sm text-foreground">
-                        <span className="text-lg">{cat.icon || "📦"}</span>
-                        {cat.name}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleDeleteClick(cat.id, cat.name)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                  {categories.map((cat, idx) => (
+                    <div
+                      key={cat.id}
+                      draggable={editingId !== cat.id}
+                      onDragStart={() => { dragItem.current = idx; setDragIdx(idx); }}
+                      onDragEnter={() => { dragOverItem.current = idx; }}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => e.preventDefault()}
+                      className={`flex items-center gap-2 rounded-md border border-border bg-muted/50 px-3 py-2 transition-opacity ${dragIdx === idx ? "opacity-50" : ""}`}
+                    >
+                      <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-muted-foreground" />
+
+                      {editingId === cat.id ? (
+                        <>
+                          <Input
+                            value={editIcon}
+                            onChange={(e) => setEditIcon(e.target.value)}
+                            className="w-14 h-8 text-center px-1"
+                          />
+                          <Input
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="flex-1 h-8"
+                            autoFocus
+                            onKeyDown={(e) => e.key === "Enter" && saveEdit()}
+                          />
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary" onClick={saveEdit} disabled={updateCategoryMutation.isPending}>
+                            <Check className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingId(null)}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex items-center gap-2 flex-1 text-sm text-foreground">
+                            <span className="text-lg">{cat.icon || "📦"}</span>
+                            {cat.name}
+                          </span>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => startEdit(cat)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => handleDeleteClick(cat.id, cat.name)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
