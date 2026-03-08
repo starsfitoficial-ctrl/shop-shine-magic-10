@@ -25,9 +25,16 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const url = new URL(request.url);
 
-  // Skip non-GET and API/supabase requests
-  if (request.method !== 'GET' || request.url.includes('/rest/') || request.url.includes('/auth/') || request.url.includes('/functions/')) {
+  // Skip non-GET, API/supabase requests, and OAuth callback
+  if (
+    request.method !== 'GET' ||
+    request.url.includes('/rest/') ||
+    request.url.includes('/auth/') ||
+    request.url.includes('/functions/') ||
+    url.pathname.startsWith('/~oauth')
+  ) {
     return;
   }
 
