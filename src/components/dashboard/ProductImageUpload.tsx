@@ -46,8 +46,8 @@ const ProductImageUpload = ({
           continue;
         }
 
-        const ext = file.name.split(".").pop();
-        const path = `${storeId}/${crypto.randomUUID()}.${ext}`;
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `${storeId}/${Date.now()}-${safeName}`;
 
         const { error } = await supabase.storage
           .from("product-images")
