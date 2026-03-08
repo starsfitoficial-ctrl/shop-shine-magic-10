@@ -94,12 +94,14 @@ const ProductPage = () => {
         reviewCount: ratings?.length,
       },
     }),
+    brand: { "@type": "Brand", name: store.name },
     offers: {
       "@type": "Offer",
       price: finalPrice,
       priceCurrency: "BRL",
       availability,
       url: `${window.location.origin}/${storeSlug}/p/${product.slug}`,
+      seller: { "@type": "Organization", name: store.name },
     },
   };
 
