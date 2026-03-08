@@ -170,7 +170,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Vitrine Digital. Todos os direitos reservados.</p>
+        <p>© {new Date().getFullYear()} SysGrowth Vitrine Digital. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
