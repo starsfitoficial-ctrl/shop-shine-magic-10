@@ -201,6 +201,7 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
   const [name, setName] = useState(product?.name || "");
   const [slug, setSlug] = useState(product?.slug || "");
   const [description, setDescription] = useState(product?.description || "");
+  const [originalPrice, setOriginalPrice] = useState(product?.original_price?.toString() || "");
   const [price, setPrice] = useState(product?.price?.toString() || "");
   const [sku, setSku] = useState(product?.sku || "");
   const [stock, setStock] = useState(product?.stock?.toString() || "10");
