@@ -13,6 +13,7 @@ import { toast } from "sonner";
 const Dashboard = () => {
   const { user, loading, signOut, isStoreOwner, isAdmin } = useAuth();
   const { data: store, isLoading: storeLoading } = useMyStore();
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   const { data: clickStats } = useQuery({
     queryKey: ["click_stats", store?.id],
