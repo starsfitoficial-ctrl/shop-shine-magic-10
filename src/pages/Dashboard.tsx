@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMyStore } from "@/hooks/useStore";
 import { useQuery } from "@tanstack/react-query";
@@ -5,12 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
-import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { user, loading, signOut, isStoreOwner, isAdmin } = useAuth();
   const { data: store, isLoading: storeLoading } = useMyStore();
+  const [upgradeLoading, setUpgradeLoading] = useState(false);
 
   const { data: clickStats } = useQuery({
     queryKey: ["click_stats", store?.id],
@@ -90,6 +93,38 @@ const Dashboard = () => {
           </div>
         </div>
       </header>
+
+      {store.plan === "free" && (
+        <div className="container mx-auto px-4 pt-6">
+          <div className="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+            <div className="flex items-center gap-2 text-amber-800">
+              <Zap className="h-5 w-5 shrink-0" />
+              <span className="text-sm font-medium">Você está no plano gratuito — limitado a 10 produtos</span>
+            </div>
+            <Button
+              size="sm"
+              disabled={upgradeLoading}
+              onClick={async () => {
+                setUpgradeLoading(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke("create-subscription", {
+                    body: { store_id: store.id, plan: "pro" },
+                  });
+                  if (error || !data?.paymentUrl) throw error ?? new Error("Sem URL");
+                  window.open(data.paymentUrl, "_blank");
+                } catch {
+                  toast.error("Erro ao gerar cobrança. Tente novamente.");
+                } finally {
+                  setUpgradeLoading(false);
+                }
+              }}
+            >
+              {upgradeLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+              Assinar Plano Pro
+            </Button>
+          </div>
+        </div>
+      )}
 
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Stats */}
