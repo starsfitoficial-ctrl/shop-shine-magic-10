@@ -4,11 +4,21 @@ import { useMyStore } from "@/hooks/useStore";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
-import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2 } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2, TrendingUp, ExternalLink } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { toast } from "sonner";
+
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  pending: { label: "Pendente", variant: "outline" },
+  confirmed: { label: "Confirmado", variant: "default" },
+  preparing: { label: "Preparando", variant: "secondary" },
+  delivering: { label: "Entregando", variant: "secondary" },
+  completed: { label: "Concluído", variant: "default" },
+  cancelled: { label: "Cancelado", variant: "destructive" },
+};
 
 const Dashboard = () => {
   const { user, loading, signOut, isStoreOwner, isAdmin } = useAuth();
@@ -57,42 +67,42 @@ const Dashboard = () => {
   if (loading || storeLoading) return <div className="flex min-h-screen items-center justify-center">Carregando...</div>;
   if (!user) return <Navigate to="/auth" />;
 
-  // If no store, show create store form
   if (!store) return <CreateStorePrompt />;
 
   const viewClicks = clickStats?.filter((c) => c.click_type === "view_product").length ?? 0;
   const whatsappClicks = clickStats?.filter((c) => c.click_type === "whatsapp_checkout").length ?? 0;
   const activeProducts = products?.filter((p) => p.is_active).length ?? 0;
 
-  // Group clicks by day for chart
   const chartData = getChartData(clickStats ?? []);
+  const storeInitials = store.name.slice(0, 2).toUpperCase();
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+      {/* Header */}
+      <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <img src="/logo-header.png" alt="SysGrowth" className="h-8 w-auto" />
-            <span className="text-xl font-bold text-foreground">Painel - {store.name}</span>
+            <span className="hidden sm:inline text-lg font-semibold text-foreground truncate max-w-[200px]">{store.name}</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {isAdmin && (
               <Link to="/admin">
                 <Button variant="outline" size="sm"><Shield className="mr-1 h-4 w-4" /> Admin</Button>
               </Link>
             )}
-            <Link to={`/${store.slug}`} target="_blank">
-              <Button variant="outline" size="sm">Ver Loja</Button>
-            </Link>
-            <Link to="/dashboard/products">
+            <Link to="/dashboard/products" className="hidden sm:inline-flex">
               <Button variant="outline" size="sm"><Package className="mr-1 h-4 w-4" /> Produtos</Button>
             </Link>
-            <Link to="/dashboard/settings">
-              <Button variant="outline" size="sm"><Settings className="mr-1 h-4 w-4" /> Configurações</Button>
+            <Link to="/dashboard/settings" className="hidden sm:inline-flex">
+              <Button variant="outline" size="sm"><Settings className="mr-1 h-4 w-4" /></Button>
             </Link>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="h-4 w-4" />
             </Button>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              {storeInitials}
+            </div>
           </div>
         </div>
       </header>
@@ -132,33 +142,91 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Stats */}
         <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Visualizações (7d)</CardTitle>
-              <MousePointerClick className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{viewClicks}</p>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="rounded-xl bg-blue-100 p-3">
+                <MousePointerClick className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Visualizações (7d)</p>
+                <p className="text-3xl font-bold text-foreground">{viewClicks}</p>
+                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
+                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
+                </p>
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">WhatsApp (7d)</CardTitle>
-              <ShoppingBag className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{whatsappClicks}</p>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="rounded-xl bg-green-100 p-3">
+                <ShoppingBag className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">WhatsApp (7d)</p>
+                <p className="text-3xl font-bold text-foreground">{whatsappClicks}</p>
+                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
+                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
+                </p>
+              </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Produtos Ativos</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{activeProducts}</p>
+          <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="flex items-center gap-4 p-5">
+              <div className="rounded-xl bg-purple-100 p-3">
+                <Package className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Produtos Ativos</p>
+                <p className="text-3xl font-bold text-foreground">{activeProducts}</p>
+                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
+                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
+                </p>
+              </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Quick Access */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Link to="/dashboard/products">
+            <Card className="group cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="rounded-xl bg-primary/10 p-3">
+                  <Plus className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Adicionar Produto</p>
+                  <p className="text-sm text-muted-foreground">Cadastrar novo item</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          <a href={`/${store.slug}`} target="_blank" rel="noopener noreferrer">
+            <Card className="group cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="rounded-xl bg-green-100 p-3">
+                  <ExternalLink className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Ver Minha Loja</p>
+                  <p className="text-sm text-muted-foreground">Abrir vitrine pública</p>
+                </div>
+              </CardContent>
+            </Card>
+          </a>
+          <Link to="/dashboard/settings">
+            <Card className="group cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="rounded-xl bg-purple-100 p-3">
+                  <Settings className="h-6 w-6 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Configurações</p>
+                  <p className="text-sm text-muted-foreground">Ajustar sua loja</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Chart */}
@@ -189,19 +257,28 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             {recentOrders && recentOrders.length > 0 ? (
-              <div className="space-y-3">
-                {recentOrders.map((order) => (
-                  <div key={order.id} className="flex items-center justify-between rounded-md border p-3">
-                    <div>
-                      <p className="font-medium text-foreground">{order.customer_name}</p>
-                      <p className="text-sm text-muted-foreground">{order.customer_phone}</p>
+              <div className="space-y-1">
+                {recentOrders.map((order) => {
+                  const status = statusConfig[order.status] ?? { label: order.status, variant: "outline" as const };
+                  return (
+                    <div key={order.id} className="flex items-center justify-between rounded-md border p-3 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <Package className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-foreground">{order.customer_name}</p>
+                          <p className="text-sm text-muted-foreground">{order.customer_phone}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant={status.variant}>{status.label}</Badge>
+                        <div className="text-right">
+                          <p className="font-bold text-foreground">R$ {order.total.toFixed(2)}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString("pt-BR")}</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-bold text-foreground">R$ {order.total.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">{new Date(order.created_at).toLocaleDateString("pt-BR")}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-muted-foreground">Nenhum pedido ainda</p>
