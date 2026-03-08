@@ -62,11 +62,14 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-6">
+            <img src="/logo-header.png" alt="SysGrowth" className="h-12 w-auto" />
+          </div>
           <CardTitle className="text-2xl font-bold">
-            {isLogin ? "Entrar" : "Criar Conta"}
+            {isLogin ? "Bem-vindo ao SysGrowth" : "Criar Conta"}
           </CardTitle>
           <CardDescription>
-            {isLogin ? "Acesse seu painel de lojista" : "Crie sua vitrine digital"}
+            {isLogin ? "Crie sua vitrine digital e venda pelo WhatsApp" : "Crie sua vitrine digital"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -119,6 +122,10 @@ const Auth = () => {
             <button onClick={() => setIsLogin(!isLogin)} className="text-primary underline">
               {isLogin ? "Criar conta" : "Fazer login"}
             </button>
+          </p>
+          <p className="text-xs text-muted-foreground text-center mt-4">
+            Ao entrar, você concorda com nossos{" "}
+            <a href="/loja-demo-brasil/terms" className="underline">Termos de Uso</a>
           </p>
         </CardContent>
       </Card>
