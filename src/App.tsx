@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import DashboardProducts from "./pages/DashboardProducts";
 import DashboardSettings from "./pages/DashboardSettings";
 import Admin from "./pages/Admin";
+import AdminSeedDemo from "./pages/AdminSeedDemo";
 import StoreFront from "./pages/StoreFront";
 import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
