@@ -219,7 +219,10 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
           </SelectContent>
         </Select>
       </div>
-      <div><Label>URL da Imagem</Label><Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." /></div>
+      <div>
+        <Label>Imagens do Produto</Label>
+        <ProductImageUpload images={images} onImagesChange={setImages} storeId={store.id} />
+      </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" id="featured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
         <Label htmlFor="featured">Produto Destaque</Label>
