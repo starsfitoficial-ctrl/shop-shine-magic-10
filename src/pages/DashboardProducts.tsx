@@ -177,7 +177,7 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
         stock: parseInt(stock) || 0,
         category_id: categoryId || null,
         is_featured: isFeatured,
-        images: imageUrl ? [imageUrl] : [],
+        images: images,
         is_active: true,
       };
 
