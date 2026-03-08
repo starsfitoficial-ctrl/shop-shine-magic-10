@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMyStore } from "@/hooks/useStore";
 import { useQuery } from "@tanstack/react-query";
@@ -5,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
-import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { user, loading, signOut, isStoreOwner, isAdmin } = useAuth();
