@@ -21,6 +21,7 @@ const ProductPage = () => {
   const { addItem, setStoreSlug } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [showPulse, setShowPulse] = useState(true);
 
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
