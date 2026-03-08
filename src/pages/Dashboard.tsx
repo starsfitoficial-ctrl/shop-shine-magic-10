@@ -70,11 +70,25 @@ const Dashboard = () => {
 
   if (!store) return <CreateStorePrompt />;
 
-  const viewClicks = clickStats?.filter((c) => c.click_type === "view_product").length ?? 0;
-  const whatsappClicks = clickStats?.filter((c) => c.click_type === "whatsapp_checkout").length ?? 0;
+  const now = Date.now();
+  const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const thisWeek = clickStats?.filter((c) => c.created_at >= oneWeekAgo) ?? [];
+  const prevWeek = clickStats?.filter((c) => c.created_at < oneWeekAgo) ?? [];
+
+  const viewClicks = thisWeek.filter((c) => c.click_type === "view_product").length;
+  const whatsappClicks = thisWeek.filter((c) => c.click_type === "whatsapp_checkout").length;
+  const prevViews = prevWeek.filter((c) => c.click_type === "view_product").length;
+  const prevWhatsapp = prevWeek.filter((c) => c.click_type === "whatsapp_checkout").length;
   const activeProducts = products?.filter((p) => p.is_active).length ?? 0;
 
-  const chartData = getChartData(clickStats ?? []);
+  const calcVariation = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 100);
+  };
+  const viewsVar = calcVariation(viewClicks, prevViews);
+  const whatsappVar = calcVariation(whatsappClicks, prevWhatsapp);
+
+  const chartData = getChartData(thisWeek);
   const storeInitials = store.name.slice(0, 2).toUpperCase();
 
   return (
