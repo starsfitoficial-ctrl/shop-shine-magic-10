@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
 import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2, TrendingUp, ExternalLink } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 
 const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
@@ -33,7 +34,7 @@ const Dashboard = () => {
         .from("click_events")
         .select("click_type, created_at")
         .eq("store_id", store.id)
-        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+        .gte("created_at", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
       return data ?? [];
     },
     enabled: !!store,
@@ -69,11 +70,25 @@ const Dashboard = () => {
 
   if (!store) return <CreateStorePrompt />;
 
-  const viewClicks = clickStats?.filter((c) => c.click_type === "view_product").length ?? 0;
-  const whatsappClicks = clickStats?.filter((c) => c.click_type === "whatsapp_checkout").length ?? 0;
+  const now = Date.now();
+  const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const thisWeek = clickStats?.filter((c) => c.created_at >= oneWeekAgo) ?? [];
+  const prevWeek = clickStats?.filter((c) => c.created_at < oneWeekAgo) ?? [];
+
+  const viewClicks = thisWeek.filter((c) => c.click_type === "view_product").length;
+  const whatsappClicks = thisWeek.filter((c) => c.click_type === "whatsapp_checkout").length;
+  const prevViews = prevWeek.filter((c) => c.click_type === "view_product").length;
+  const prevWhatsapp = prevWeek.filter((c) => c.click_type === "whatsapp_checkout").length;
   const activeProducts = products?.filter((p) => p.is_active).length ?? 0;
 
-  const chartData = getChartData(clickStats ?? []);
+  const calcVariation = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 100);
+  };
+  const viewsVar = calcVariation(viewClicks, prevViews);
+  const whatsappVar = calcVariation(whatsappClicks, prevWhatsapp);
+
+  const chartData = getChartData(thisWeek);
   const storeInitials = store.name.slice(0, 2).toUpperCase();
 
   return (
@@ -150,9 +165,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Visualizações (7d)</p>
                 <p className="text-3xl font-bold text-foreground">{viewClicks}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
+                <VariationLabel value={viewsVar} />
               </div>
             </CardContent>
           </Card>
@@ -164,9 +177,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">WhatsApp (7d)</p>
                 <p className="text-3xl font-bold text-foreground">{whatsappClicks}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
+                <VariationLabel value={whatsappVar} />
               </div>
             </CardContent>
           </Card>
@@ -178,9 +189,6 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Produtos Ativos</p>
                 <p className="text-3xl font-bold text-foreground">{activeProducts}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
               </div>
             </CardContent>
           </Card>
@@ -289,6 +297,17 @@ const Dashboard = () => {
     </div>
   );
 };
+
+function VariationLabel({ value }: { value: number }) {
+  if (value === 0) return <p className="mt-1 text-sm text-muted-foreground">Sem variação</p>;
+  const isPositive = value > 0;
+  return (
+    <p className={`mt-1 flex items-center gap-1 text-sm ${isPositive ? "text-green-600" : "text-destructive"}`}>
+      {isPositive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+      {isPositive ? "+" : ""}{value}% vs. semana anterior
+    </p>
+  );
+}
 
 function CreateStorePrompt() {
   return (
