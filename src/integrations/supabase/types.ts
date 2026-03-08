@@ -470,6 +470,7 @@ export type Database = {
           primary_color: string
           slug: string
           subscription_expires_at: string | null
+          subscription_id: string | null
           subscription_status: Database["public"]["Enums"]["subscription_status"]
           updated_at: string
           use_zone_delivery: boolean | null
@@ -487,6 +488,7 @@ export type Database = {
           primary_color?: string
           slug: string
           subscription_expires_at?: string | null
+          subscription_id?: string | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           use_zone_delivery?: boolean | null
@@ -504,6 +506,7 @@ export type Database = {
           primary_color?: string
           slug?: string
           subscription_expires_at?: string | null
+          subscription_id?: string | null
           subscription_status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           use_zone_delivery?: boolean | null
