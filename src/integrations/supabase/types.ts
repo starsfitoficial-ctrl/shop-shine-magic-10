@@ -333,6 +333,7 @@ export type Database = {
           is_active: boolean | null
           is_featured: boolean | null
           name: string
+          original_price: number | null
           price: number
           sku: string | null
           slug: string
@@ -349,6 +350,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           name: string
+          original_price?: number | null
           price: number
           sku?: string | null
           slug: string
@@ -365,6 +367,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           name?: string
+          original_price?: number | null
           price?: number
           sku?: string | null
           slug?: string
