@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import ProductOptionsManager from "@/components/dashboard/ProductOptionsManager";
+import ProductImageUpload from "@/components/dashboard/ProductImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
