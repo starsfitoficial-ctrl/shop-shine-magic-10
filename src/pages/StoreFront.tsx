@@ -19,6 +19,7 @@ const StoreFront = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [cartOpen, setCartOpen] = useState(false);
+  const [showPulse, setShowPulse] = useState(true);
   const { setStoreSlug } = useCart();
   const { data: categories } = useStoreCategories(store?.id);
   const { data: products, isLoading: productsLoading } = useStoreProducts(
