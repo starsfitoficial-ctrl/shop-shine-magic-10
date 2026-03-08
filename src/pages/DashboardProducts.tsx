@@ -86,9 +86,15 @@ const DashboardProducts = () => {
             <h1 className="text-xl font-bold text-foreground">Produtos</h1>
           </div>
           <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) setEditingProduct(null); }}>
-            <DialogTrigger asChild>
-              <Button><Plus className="mr-1 h-4 w-4" /> Novo Produto</Button>
-            </DialogTrigger>
+            <Button onClick={() => {
+              if (store.plan === "free" && (products?.length ?? 0) >= 10) {
+                setUpgradeModalOpen(true);
+              } else {
+                setDialogOpen(true);
+              }
+            }}>
+              <Plus className="mr-1 h-4 w-4" /> Novo Produto
+            </Button>
             <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader><DialogTitle>{editingProduct ? "Editar Produto" : "Novo Produto"}</DialogTitle></DialogHeader>
               <ProductForm
@@ -105,6 +111,50 @@ const DashboardProducts = () => {
           </Dialog>
         </div>
       </header>
+
+      {/* Upgrade Modal */}
+      <Dialog open={upgradeModalOpen} onOpenChange={setUpgradeModalOpen}>
+        <DialogContent className="max-w-sm text-center">
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="rounded-full bg-amber-100 p-3">
+              <Lock className="h-8 w-8 text-amber-600" />
+            </div>
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-center">Limite de produtos atingido</DialogTitle>
+              <DialogDescription className="text-center">
+                Você atingiu o limite de 10 produtos do plano gratuito. Faça upgrade para cadastrar produtos ilimitados.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-3 w-full">
+              <Button variant="outline" className="flex-1" onClick={() => setUpgradeModalOpen(false)}>
+                Agora não
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={upgradeLoading}
+                onClick={async () => {
+                  setUpgradeLoading(true);
+                  try {
+                    const { data, error } = await supabase.functions.invoke("create-subscription", {
+                      body: { store_id: store.id, plan: "pro" },
+                    });
+                    if (error || !data?.paymentUrl) throw error ?? new Error("Sem URL");
+                    window.open(data.paymentUrl, "_blank");
+                    setUpgradeModalOpen(false);
+                  } catch {
+                    toast.error("Erro ao gerar cobrança. Tente novamente.");
+                  } finally {
+                    setUpgradeLoading(false);
+                  }
+                }}
+              >
+                {upgradeLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Fazer Upgrade
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <main className="container mx-auto px-4 py-6">
         <div className="space-y-3">
