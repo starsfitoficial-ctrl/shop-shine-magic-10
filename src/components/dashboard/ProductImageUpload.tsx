@@ -72,7 +72,19 @@ const ProductImageUpload = ({
     }
   };
 
-  const removeImage = (index: number) => {
+  const removeImage = async (index: number) => {
+    const url = images[index];
+    // Try to delete from storage if it's in our bucket
+    try {
+      const bucketUrl = "/storage/v1/object/public/product-images/";
+      const bucketIdx = url.indexOf(bucketUrl);
+      if (bucketIdx !== -1) {
+        const filePath = url.substring(bucketIdx + bucketUrl.length);
+        await supabase.storage.from("product-images").remove([filePath]);
+      }
+    } catch {
+      // Ignore deletion errors for external URLs
+    }
     onImagesChange(images.filter((_, i) => i !== index));
   };
 
