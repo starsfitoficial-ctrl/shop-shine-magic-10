@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import StoreFooter from "@/components/store/StoreFooter";
+import { openWhatsApp } from "@/lib/whatsapp";
 
 const ProductPage = () => {
   const { storeSlug, productSlug } = useParams<{ storeSlug: string; productSlug: string }>();
