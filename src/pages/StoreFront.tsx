@@ -31,7 +31,6 @@ const StoreFront = () => {
 
   useEffect(() => {
     if (store) {
-      // Apply store's primary color as CSS variable
       const root = document.documentElement;
       root.style.setProperty("--store-primary", hexToHsl(store.primary_color));
       if (storeSlug) setStoreSlug(storeSlug);
@@ -40,6 +39,11 @@ const StoreFront = () => {
       document.documentElement.style.removeProperty("--store-primary");
     };
   }, [store, storeSlug, setStoreSlug]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPulse(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (storeLoading) {
     return (
