@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import ProductOptionsManager from "@/components/dashboard/ProductOptionsManager";
+import ProductImageUpload from "@/components/dashboard/ProductImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -152,7 +153,7 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
   const [stock, setStock] = useState(product?.stock?.toString() || "10");
   const [categoryId, setCategoryId] = useState(product?.category_id || "");
   const [isFeatured, setIsFeatured] = useState(product?.is_featured || false);
-  const [imageUrl, setImageUrl] = useState(product?.images?.[0] || "");
+  const [images, setImages] = useState<string[]>(product?.images || []);
   const [saving, setSaving] = useState(false);
 
   const handleNameChange = (v: string) => {
@@ -176,7 +177,7 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
         stock: parseInt(stock) || 0,
         category_id: categoryId || null,
         is_featured: isFeatured,
-        images: imageUrl ? [imageUrl] : [],
+        images: images,
         is_active: true,
       };
 
@@ -218,7 +219,10 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
           </SelectContent>
         </Select>
       </div>
-      <div><Label>URL da Imagem</Label><Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." /></div>
+      <div>
+        <Label>Imagens do Produto</Label>
+        <ProductImageUpload images={images} onImagesChange={setImages} storeId={store.id} />
+      </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" id="featured" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} />
         <Label htmlFor="featured">Produto Destaque</Label>
