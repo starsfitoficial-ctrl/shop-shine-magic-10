@@ -153,7 +153,7 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
   const [stock, setStock] = useState(product?.stock?.toString() || "10");
   const [categoryId, setCategoryId] = useState(product?.category_id || "");
   const [isFeatured, setIsFeatured] = useState(product?.is_featured || false);
-  const [imageUrl, setImageUrl] = useState(product?.images?.[0] || "");
+  const [images, setImages] = useState<string[]>(product?.images || []);
   const [saving, setSaving] = useState(false);
 
   const handleNameChange = (v: string) => {
