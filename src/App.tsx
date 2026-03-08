@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import DashboardProducts from "./pages/DashboardProducts";
 import DashboardSettings from "./pages/DashboardSettings";
 import Admin from "./pages/Admin";
+import AdminSeedDemo from "./pages/AdminSeedDemo";
 import StoreFront from "./pages/StoreFront";
 import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
@@ -37,6 +38,7 @@ const App = () => (
                 <Route path="/dashboard/products" element={<DashboardProducts />} />
                 <Route path="/dashboard/settings" element={<DashboardSettings />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/seed-demo" element={<AdminSeedDemo />} />
                 <Route path="/:storeSlug" element={<StoreFront />} />
                 <Route path="/:storeSlug/p/:productSlug" element={<ProductPage />} />
                 <Route path="/:storeSlug/checkout" element={<Checkout />} />
