@@ -135,25 +135,30 @@ const Landing = () => {
       </section>
 
       {/* Demo Banner */}
-      <section className="border-t bg-primary/5">
-        <div className="container mx-auto flex flex-col items-center gap-6 px-4 py-14 md:flex-row md:justify-between">
-          <div className="text-center md:text-left">
-            <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              Exemplo ao vivo
-            </span>
-            <h2 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">
-              Conheça a Loja Demo Brasil
-            </h2>
-            <p className="mt-2 max-w-lg text-muted-foreground">
-              Explore uma loja completa com 10 produtos, categorias e checkout via WhatsApp. Veja na prática o que você pode criar em minutos.
-            </p>
+      <section className="border-t bg-muted/40">
+        <div className="container mx-auto px-4 py-16">
+          <div className="flex flex-col items-center gap-8 rounded-2xl bg-card border p-8 md:p-12 md:flex-row md:justify-between shadow-sm">
+            <div className="flex items-start gap-5 text-center md:text-left">
+              <Store className="hidden md:block h-12 w-12 flex-shrink-0 text-primary mt-1" />
+              <div>
+                <span className="mb-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                  Exemplo ao vivo
+                </span>
+                <h2 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
+                  Conheça a Loja Demo Brasil
+                </h2>
+                <p className="mt-2 max-w-lg text-muted-foreground">
+                  Explore uma loja completa com 10 produtos, categorias e checkout via WhatsApp. Veja na prática o que você pode criar em minutos.
+                </p>
+              </div>
+            </div>
+            <Link to="/loja-demo-brasil" className="flex-shrink-0">
+              <Button size="lg" className="text-lg px-8 shadow-lg">
+                <Store className="mr-2 h-5 w-5" />
+                Visitar Loja Demo
+              </Button>
+            </Link>
           </div>
-          <Link to="/loja-demo-brasil">
-            <Button size="lg" className="text-lg px-8 shadow-lg">
-              <Store className="mr-2 h-5 w-5" />
-              Visitar Loja Demo
-            </Button>
-          </Link>
         </div>
       </section>
 
