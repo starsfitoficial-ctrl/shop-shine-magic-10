@@ -467,6 +467,7 @@ export type Database = {
           logo_url: string | null
           name: string
           owner_id: string
+          plan: string
           primary_color: string
           slug: string
           subscription_expires_at: string | null
@@ -485,6 +486,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           owner_id: string
+          plan?: string
           primary_color?: string
           slug: string
           subscription_expires_at?: string | null
@@ -503,6 +505,7 @@ export type Database = {
           logo_url?: string | null
           name?: string
           owner_id?: string
+          plan?: string
           primary_color?: string
           slug?: string
           subscription_expires_at?: string | null
