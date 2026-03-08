@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { useStoreBySlug, useStoreProducts, useStoreCategories } from "@/hooks/useStore";
 import { useCart } from "@/contexts/CartContext";
