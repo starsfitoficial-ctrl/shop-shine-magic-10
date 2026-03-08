@@ -291,8 +291,23 @@ const Landing = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} SysGrowth Vitrine Digital. Todos os direitos reservados.</p>
+      <footer className="border-t bg-card">
+        <div className="container mx-auto px-4 py-10">
+          <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <img src="/logo-header.png" alt="SysGrowth" className="h-8 w-auto" />
+              <p className="text-sm text-muted-foreground">Sua loja online em minutos</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 text-sm">
+              <Link to="/loja-demo-brasil" className="text-muted-foreground hover:text-foreground transition-colors">Ver Demo</Link>
+              <Link to="/auth" className="text-muted-foreground hover:text-foreground transition-colors">Entrar</Link>
+              <Link to="/auth" className="text-muted-foreground hover:text-foreground transition-colors">Criar Loja Grátis</Link>
+            </div>
+          </div>
+          <div className="mt-8 border-t pt-6 text-center text-xs text-muted-foreground">
+            <p>© 2025 SysGrowth. Todos os direitos reservados.</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
