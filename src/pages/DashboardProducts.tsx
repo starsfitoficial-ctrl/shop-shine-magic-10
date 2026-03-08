@@ -259,10 +259,13 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
       <div><Label>Slug *</Label><Input value={slug} onChange={(e) => setSlug(e.target.value)} required /></div>
       <div><Label>Descrição</Label><Textarea value={description} onChange={(e) => setDescription(e.target.value)} /></div>
       <div className="grid grid-cols-2 gap-3">
+        <div><Label>Preço De (opcional)</Label><Input type="number" step="0.01" placeholder="0,00" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} /></div>
         <div><Label>Preço *</Label><Input type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} required /></div>
-        <div><Label>Estoque</Label><Input type="number" value={stock} onChange={(e) => setStock(e.target.value)} /></div>
       </div>
-      <div><Label>SKU</Label><Input value={sku} onChange={(e) => setSku(e.target.value)} /></div>
+      <div className="grid grid-cols-2 gap-3">
+        <div><Label>Estoque</Label><Input type="number" value={stock} onChange={(e) => setStock(e.target.value)} /></div>
+        <div><Label>SKU</Label><Input value={sku} onChange={(e) => setSku(e.target.value)} /></div>
+      </div>
       <div>
         <Label>Categoria</Label>
         <Select value={categoryId} onValueChange={setCategoryId}>

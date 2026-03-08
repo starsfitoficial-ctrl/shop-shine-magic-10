@@ -93,9 +93,23 @@ const ProductGrid = ({ products, storeSlug, loading, hasActiveFilter, onClearFil
             </div>
             <div className="p-3">
               <h3 className="line-clamp-2 text-sm font-medium text-foreground">{product.name}</h3>
-              <p className="mt-1 text-lg font-bold text-primary">
-                R$ {product.price.toFixed(2)}
-              </p>
+              {product.original_price && product.original_price > product.price ? (
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  <span className="text-sm text-muted-foreground line-through">
+                    R$ {product.original_price.toFixed(2)}
+                  </span>
+                  <span className="text-lg font-extrabold text-primary">
+                    R$ {product.price.toFixed(2)}
+                  </span>
+                  <span className="rounded-full bg-destructive px-2 py-0.5 text-xs font-bold text-destructive-foreground">
+                    {Math.round((1 - product.price / product.original_price) * 100)}% OFF
+                  </span>
+                </div>
+              ) : (
+                <p className="mt-1 text-lg font-bold text-primary">
+                  R$ {product.price.toFixed(2)}
+                </p>
+              )}
             </div>
           </Link>
         );
