@@ -9,6 +9,7 @@ interface Product {
   name: string;
   slug: string;
   price: number;
+  original_price?: number | null;
   images: string[] | null;
   stock: number | null;
   is_featured: boolean | null;
