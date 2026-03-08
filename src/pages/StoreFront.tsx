@@ -117,6 +117,8 @@ const StoreFront = () => {
           storeSlug={storeSlug!}
           storeId={store.id}
           loading={productsLoading}
+          hasActiveFilter={!!selectedCategory || !!searchQuery}
+          onClearFilters={() => { setSelectedCategory(null); setSearchQuery(""); }}
         />
       </main>
 

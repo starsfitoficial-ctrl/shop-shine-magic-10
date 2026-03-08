@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ShoppingBag } from "lucide-react";
 
 interface Product {
   id: string;
@@ -18,14 +20,22 @@ interface ProductGridProps {
   storeSlug: string;
   storeId: string;
   loading: boolean;
+  hasActiveFilter?: boolean;
+  onClearFilters?: () => void;
 }
 
-const ProductGrid = ({ products, storeSlug, loading }: ProductGridProps) => {
+const ProductGrid = ({ products, storeSlug, loading, hasActiveFilter, onClearFilters }: ProductGridProps) => {
   if (loading) {
     return (
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-64 w-full rounded-lg" />
+          <div key={i} className="overflow-hidden rounded-lg border bg-card">
+            <Skeleton className="aspect-square w-full" />
+            <div className="p-3 space-y-2">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-5 w-1/2" />
+            </div>
+          </div>
         ))}
       </div>
     );
@@ -33,8 +43,19 @@ const ProductGrid = ({ products, storeSlug, loading }: ProductGridProps) => {
 
   if (products.length === 0) {
     return (
-      <div className="py-20 text-center text-muted-foreground">
-        Nenhum produto encontrado
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <ShoppingBag className="h-16 w-16 text-muted-foreground/40 mb-4" />
+        <h3 className="text-lg font-semibold text-foreground">Nenhum produto encontrado</h3>
+        <p className="mt-1 text-sm text-muted-foreground max-w-xs">
+          {hasActiveFilter
+            ? "Tente buscar por outro termo ou explore outras categorias"
+            : "Esta loja ainda não tem produtos cadastrados"}
+        </p>
+        {hasActiveFilter && onClearFilters && (
+          <Button variant="outline" className="mt-4" onClick={onClearFilters}>
+            Limpar filtros
+          </Button>
+        )}
       </div>
     );
   }

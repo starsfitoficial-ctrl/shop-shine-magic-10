@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -28,8 +28,11 @@ const CartDrawer = ({ open, onClose, store }: CartDrawerProps) => {
         </SheetHeader>
 
         {items.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-muted-foreground">
-            Sua sacola está vazia
+          <div className="flex flex-1 flex-col items-center justify-center text-center gap-3">
+            <ShoppingCart className="h-16 w-16 text-muted-foreground/40" />
+            <h3 className="text-lg font-semibold text-foreground">Sua sacola está vazia</h3>
+            <p className="text-sm text-muted-foreground">Adicione produtos para continuar</p>
+            <Button variant="outline" className="mt-2" onClick={onClose}>Ver Produtos</Button>
           </div>
         ) : (
           <>
