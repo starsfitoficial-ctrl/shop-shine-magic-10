@@ -94,12 +94,14 @@ const ProductPage = () => {
         reviewCount: ratings?.length,
       },
     }),
+    brand: { "@type": "Brand", name: store.name },
     offers: {
       "@type": "Offer",
       price: finalPrice,
       priceCurrency: "BRL",
       availability,
       url: `${window.location.origin}/${storeSlug}/p/${product.slug}`,
+      seller: { "@type": "Organization", name: store.name },
     },
   };
 
@@ -145,6 +147,7 @@ const ProductPage = () => {
         <meta property="og:title" content={product.name} />
         <meta property="og:description" content={product.description || product.name} />
         <meta property="og:image" content={images[0]} />
+        <meta property="og:url" content={`${window.location.origin}/${storeSlug}/p/${product.slug}`} />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
