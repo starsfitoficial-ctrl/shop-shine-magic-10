@@ -165,9 +165,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Visualizações (7d)</p>
                 <p className="text-3xl font-bold text-foreground">{viewClicks}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
+                <VariationLabel value={viewsVar} />
               </div>
             </CardContent>
           </Card>
@@ -179,9 +177,7 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">WhatsApp (7d)</p>
                 <p className="text-3xl font-bold text-foreground">{whatsappClicks}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
+                <VariationLabel value={whatsappVar} />
               </div>
             </CardContent>
           </Card>
@@ -193,9 +189,6 @@ const Dashboard = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Produtos Ativos</p>
                 <p className="text-3xl font-bold text-foreground">{activeProducts}</p>
-                <p className="mt-1 flex items-center gap-1 text-sm text-green-600">
-                  <TrendingUp className="h-3.5 w-3.5" /> vs. semana anterior
-                </p>
               </div>
             </CardContent>
           </Card>
