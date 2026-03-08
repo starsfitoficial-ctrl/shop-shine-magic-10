@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { useStoreBySlug, useStoreProducts, useStoreCategories } from "@/hooks/useStore";
@@ -8,8 +8,9 @@ import CategoryCarousel from "@/components/store/CategoryCarousel";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
 import StoreFooter from "@/components/store/StoreFooter";
-import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MessageCircle } from "lucide-react";
+import { openWhatsApp } from "@/lib/whatsapp";
 
 const StoreFront = () => {
   const { storeSlug } = useParams<{ storeSlug: string }>();
@@ -18,6 +19,7 @@ const StoreFront = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [cartOpen, setCartOpen] = useState(false);
+  const [showPulse, setShowPulse] = useState(true);
   const { setStoreSlug } = useCart();
   const { data: categories } = useStoreCategories(store?.id);
   const { data: products, isLoading: productsLoading } = useStoreProducts(
@@ -29,7 +31,6 @@ const StoreFront = () => {
 
   useEffect(() => {
     if (store) {
-      // Apply store's primary color as CSS variable
       const root = document.documentElement;
       root.style.setProperty("--store-primary", hexToHsl(store.primary_color));
       if (storeSlug) setStoreSlug(storeSlug);
@@ -38,6 +39,11 @@ const StoreFront = () => {
       document.documentElement.style.removeProperty("--store-primary");
     };
   }, [store, storeSlug, setStoreSlug]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPulse(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (storeLoading) {
     return (
@@ -124,6 +130,20 @@ const StoreFront = () => {
 
       <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} store={store} />
+
+      {/* WhatsApp floating button */}
+      <div className="group fixed bottom-20 right-6 z-50 md:bottom-6">
+        <div className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity group-hover:opacity-100">
+          Falar com a loja
+        </div>
+        <button
+          onClick={() => openWhatsApp(store.whatsapp, "Olá! Vim pelo catálogo online e gostaria de mais informações.")}
+          className={`flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl ${showPulse ? "animate-pulse" : ""}`}
+          aria-label="Falar com a loja no WhatsApp"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </button>
+      </div>
     </div>
   );
 };
