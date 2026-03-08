@@ -39,6 +39,11 @@ const ProductPage = () => {
     }
   }, [store, product, storeSlug, setStoreSlug]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPulse(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background p-4">
