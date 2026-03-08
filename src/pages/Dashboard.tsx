@@ -71,7 +71,10 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <h1 className="text-xl font-bold text-foreground">Painel - {store.name}</h1>
+          <div className="flex items-center gap-3">
+            <img src="/logo-header.png" alt="SysGrowth" className="h-8 w-auto" />
+            <span className="text-xl font-bold text-foreground">Painel - {store.name}</span>
+          </div>
           <div className="flex items-center gap-3">
             {isAdmin && (
               <Link to="/admin">
