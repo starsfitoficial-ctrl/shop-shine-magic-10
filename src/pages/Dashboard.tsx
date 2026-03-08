@@ -298,6 +298,17 @@ const Dashboard = () => {
   );
 };
 
+function VariationLabel({ value }: { value: number }) {
+  if (value === 0) return <p className="mt-1 text-sm text-muted-foreground">Sem variação</p>;
+  const isPositive = value > 0;
+  return (
+    <p className={`mt-1 flex items-center gap-1 text-sm ${isPositive ? "text-green-600" : "text-destructive"}`}>
+      {isPositive ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+      {isPositive ? "+" : ""}{value}% vs. semana anterior
+    </p>
+  );
+}
+
 function CreateStorePrompt() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
