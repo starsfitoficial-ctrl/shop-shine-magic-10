@@ -68,6 +68,16 @@ const StoreFront = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{store.name} — Catálogo Online</title>
+        <meta name="description" content={`Compre online na loja ${store.name}. Catálogo completo com checkout via WhatsApp.`} />
+        <meta property="og:title" content={store.name} />
+        <meta property="og:description" content={`Confira o catálogo da loja ${store.name} e faça seu pedido pelo WhatsApp.`} />
+        <meta property="og:image" content={store.logo_url || '/placeholder.svg'} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta name="theme-color" content={store.primary_color || '#3B82F6'} />
+      </Helmet>
       <StoreHeader
         store={store}
         searchQuery={searchQuery}
