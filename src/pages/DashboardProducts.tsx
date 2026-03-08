@@ -221,11 +221,12 @@ function ProductForm({ store, categories, product, onSuccess }: any) {
     e.preventDefault();
     setSaving(true);
     try {
-      const data = {
+      const data: any = {
         store_id: store.id,
         name,
         slug,
         description: description || null,
+        original_price: originalPrice ? parseFloat(originalPrice) : null,
         price: parseFloat(price),
         sku: sku || null,
         stock: parseInt(stock) || 0,
