@@ -5,13 +5,14 @@ import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, ArrowLeft, Share2, Heart, Star } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import StoreFooter from "@/components/store/StoreFooter";
+import { openWhatsApp } from "@/lib/whatsapp";
 
 const ProductPage = () => {
   const { storeSlug, productSlug } = useParams<{ storeSlug: string; productSlug: string }>();
@@ -20,6 +21,7 @@ const ProductPage = () => {
   const { addItem, setStoreSlug } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [showPulse, setShowPulse] = useState(true);
 
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
@@ -36,6 +38,11 @@ const ProductPage = () => {
       if (storeSlug) setStoreSlug(storeSlug);
     }
   }, [store, product, storeSlug, setStoreSlug]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowPulse(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (isLoading) {
     return (
@@ -303,6 +310,20 @@ const ProductPage = () => {
         </div>
 
         <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
+
+        {/* WhatsApp floating button */}
+        <div className="group fixed bottom-20 right-6 z-50 md:bottom-6">
+          <div className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity group-hover:opacity-100">
+            Falar com a loja
+          </div>
+          <button
+            onClick={() => openWhatsApp(store.whatsapp, "Olá! Vim pelo catálogo online e gostaria de mais informações.")}
+            className={`flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl ${showPulse ? "animate-pulse" : ""}`}
+            aria-label="Falar com a loja no WhatsApp"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </button>
+        </div>
       </div>
     </>
   );
