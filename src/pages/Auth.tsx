@@ -123,6 +123,10 @@ const Auth = () => {
               {isLogin ? "Criar conta" : "Fazer login"}
             </button>
           </p>
+          <p className="text-xs text-muted-foreground text-center mt-4">
+            Ao entrar, você concorda com nossos{" "}
+            <a href="/loja-demo-brasil/terms" className="underline">Termos de Uso</a>
+          </p>
         </CardContent>
       </Card>
     </div>
