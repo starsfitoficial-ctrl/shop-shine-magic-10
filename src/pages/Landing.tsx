@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Store, ShoppingBag, BarChart3, Zap } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Store, ShoppingBag, BarChart3, Zap, Crown, Check } from "lucide-react";
 
 const Landing = () => {
   return (
