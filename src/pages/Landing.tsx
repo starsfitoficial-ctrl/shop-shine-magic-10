@@ -12,7 +12,7 @@ const Landing = () => {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <Store className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold text-foreground">Vitrine Digital</span>
+            <span className="text-xl font-bold text-foreground">SysGrowth Vitrine Digital</span>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth">
@@ -170,7 +170,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© {new Date().getFullYear()} Vitrine Digital. Todos os direitos reservados.</p>
+        <p>© {new Date().getFullYear()} SysGrowth Vitrine Digital. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
