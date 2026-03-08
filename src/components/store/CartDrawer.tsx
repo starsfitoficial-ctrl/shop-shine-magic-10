@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Tables } from "@/integrations/supabase/types";
 
