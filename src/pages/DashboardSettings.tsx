@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMyStore } from "@/hooks/useStore";
+import { useMyStore, useStoreCategories } from "@/hooks/useStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,26 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2, Plus } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const DashboardSettings = () => {
   const { user, loading } = useAuth();
   const { data: store, refetch: refetchStore } = useMyStore();
+  const { data: categories = [] } = useStoreCategories(store?.id);
+  const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
 
   // Store fields
@@ -32,6 +45,13 @@ const DashboardSettings = () => {
   const [terms, setTerms] = useState("");
   const [contact, setContact] = useState("");
 
+  // Category form
+  const [newCatName, setNewCatName] = useState("");
+  const [newCatIcon, setNewCatIcon] = useState("");
+
+  // Delete confirmation
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string; hasProducts: boolean } | null>(null);
+
   useEffect(() => {
     if (store) {
       setName(store.name);
@@ -43,7 +63,6 @@ const DashboardSettings = () => {
       setFixedFee(store.fixed_delivery_fee?.toString() || "0");
       setUseZone(store.use_zone_delivery ?? false);
 
-      // Fetch settings
       supabase.from("store_settings").select("*").eq("store_id", store.id).single().then(({ data }) => {
         if (data) {
           setRefundPolicy(data.refund_policy || "");
@@ -53,6 +72,54 @@ const DashboardSettings = () => {
       });
     }
   }, [store]);
+
+  const addCategoryMutation = useMutation({
+    mutationFn: async () => {
+      if (!store || !newCatName.trim()) throw new Error("Nome obrigatório");
+      const maxSort = categories.length > 0 ? Math.max(...categories.map((c) => c.sort_order ?? 0)) : 0;
+      const { error } = await supabase.from("categories").insert({
+        store_id: store.id,
+        name: newCatName.trim(),
+        icon: newCatIcon.trim() || "📦",
+        sort_order: maxSort + 1,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Categoria adicionada!");
+      setNewCatName("");
+      setNewCatIcon("");
+      queryClient.invalidateQueries({ queryKey: ["categories", store?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: async (categoryId: string) => {
+      const { error } = await supabase.from("categories").delete().eq("id", categoryId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Categoria excluída!");
+      queryClient.invalidateQueries({ queryKey: ["categories", store?.id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const handleDeleteClick = async (catId: string, catName: string) => {
+    const { count } = await supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("category_id", catId);
+    setDeleteTarget({ id: catId, name: catName, hasProducts: (count ?? 0) > 0 });
+  };
+
+  const confirmDelete = () => {
+    if (deleteTarget) {
+      deleteCategoryMutation.mutate(deleteTarget.id);
+      setDeleteTarget(null);
+    }
+  };
 
   if (loading) return <div className="flex min-h-screen items-center justify-center">Carregando...</div>;
   if (!user) return <Navigate to="/auth" />;
@@ -146,6 +213,63 @@ const DashboardSettings = () => {
           </CardContent>
         </Card>
 
+        {store && (
+          <Card>
+            <CardHeader><CardTitle>Categorias</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              {categories.length > 0 ? (
+                <div className="space-y-2">
+                  {categories.map((cat) => (
+                    <div key={cat.id} className="flex items-center justify-between rounded-md border border-border bg-muted/50 px-3 py-2">
+                      <span className="flex items-center gap-2 text-sm text-foreground">
+                        <span className="text-lg">{cat.icon || "📦"}</span>
+                        {cat.name}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => handleDeleteClick(cat.id, cat.name)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Nenhuma categoria cadastrada.</p>
+              )}
+
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <Label>Nome</Label>
+                  <Input
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder="Ex: Eletrônicos"
+                  />
+                </div>
+                <div className="w-20">
+                  <Label>Ícone</Label>
+                  <Input
+                    value={newCatIcon}
+                    onChange={(e) => setNewCatIcon(e.target.value)}
+                    placeholder="🛍️"
+                  />
+                </div>
+                <Button
+                  onClick={() => addCategoryMutation.mutate()}
+                  disabled={!newCatName.trim() || addCategoryMutation.isPending}
+                  size="default"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Adicionar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader><CardTitle>Taxas de Entrega</CardTitle></CardHeader>
           <CardContent className="space-y-4">
@@ -172,6 +296,25 @@ const DashboardSettings = () => {
           {saving ? "Salvando..." : store ? "Salvar Configurações" : "Criar Loja"}
         </Button>
       </main>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir categoria "{deleteTarget?.name}"?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget?.hasProducts
+                ? "⚠️ Existem produtos vinculados a esta categoria. Eles ficarão sem categoria após a exclusão. Deseja continuar?"
+                : "Esta ação não pode ser desfeita."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
