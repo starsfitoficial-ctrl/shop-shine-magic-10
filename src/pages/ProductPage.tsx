@@ -310,6 +310,20 @@ const ProductPage = () => {
         </div>
 
         <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
+
+        {/* WhatsApp floating button */}
+        <div className="group fixed bottom-20 right-6 z-50 md:bottom-6">
+          <div className="absolute right-16 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-foreground px-3 py-1.5 text-sm text-background opacity-0 transition-opacity group-hover:opacity-100">
+            Falar com a loja
+          </div>
+          <button
+            onClick={() => openWhatsApp(store.whatsapp, "Olá! Vim pelo catálogo online e gostaria de mais informações.")}
+            className={`flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl ${showPulse ? "animate-pulse" : ""}`}
+            aria-label="Falar com a loja no WhatsApp"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </button>
+        </div>
       </div>
     </>
   );
