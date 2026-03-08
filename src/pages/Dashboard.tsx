@@ -34,7 +34,7 @@ const Dashboard = () => {
         .from("click_events")
         .select("click_type, created_at")
         .eq("store_id", store.id)
-        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+        .gte("created_at", new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString());
       return data ?? [];
     },
     enabled: !!store,
