@@ -422,6 +422,47 @@ export type Database = {
         }
         Relationships: []
       }
+      store_banners: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean | null
+          link: string | null
+          sort_order: number | null
+          store_id: string
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url: string
+          is_active?: boolean | null
+          link?: string | null
+          sort_order?: number | null
+          store_id: string
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean | null
+          link?: string | null
+          sort_order?: number | null
+          store_id?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_banners_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_settings: {
         Row: {
           contact_info: string | null

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
-import { useStoreBySlug, useStoreProducts, useStoreCategories } from "@/hooks/useStore";
+import { useStoreBySlug, useStoreProducts, useStoreCategories, useStoreBanners } from "@/hooks/useStore";
 import { useCart } from "@/contexts/CartContext";
 import StoreHeader from "@/components/store/StoreHeader";
 import CategoryCarousel from "@/components/store/CategoryCarousel";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
 import StoreFooter from "@/components/store/StoreFooter";
+import PromoBanner from "@/components/store/PromoBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle } from "lucide-react";
 import { openWhatsApp } from "@/lib/whatsapp";
@@ -22,12 +23,28 @@ const StoreFront = () => {
   const [showPulse, setShowPulse] = useState(true);
   const { setStoreSlug } = useCart();
   const { data: categories } = useStoreCategories(store?.id);
+  const { data: banners } = useStoreBanners(store?.id);
   const { data: products, isLoading: productsLoading } = useStoreProducts(
     store?.id,
     selectedCategory,
     searchQuery,
     sortBy === "price_asc" ? "price_asc" : sortBy === "featured" ? "featured" : undefined
   );
+
+  // Dark mode: detect system preference
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const apply = (dark: boolean) => {
+      document.documentElement.classList.toggle("dark", dark);
+    };
+    apply(mq.matches);
+    const handler = (e: MediaQueryListEvent) => apply(e.matches);
+    mq.addEventListener("change", handler);
+    return () => {
+      mq.removeEventListener("change", handler);
+      document.documentElement.classList.remove("dark");
+    };
+  }, []);
 
   useEffect(() => {
     if (store) {
@@ -82,7 +99,7 @@ const StoreFront = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-secondary dark:bg-background">
       <Helmet>
         <title>{store.name} — Catálogo Online</title>
         <meta name="description" content={`Compre online na loja ${store.name}. Catálogo completo com checkout via WhatsApp.`} />
@@ -120,7 +137,14 @@ const StoreFront = () => {
       </div>
       
       <main className="container mx-auto px-4 pb-20">
-        <div className="bg-white rounded-2xl shadow-sm p-4 mt-4">
+        {/* Promo Banners */}
+        {banners && banners.length > 0 && (
+          <div className="mt-4">
+            <PromoBanner banners={banners} />
+          </div>
+        )}
+
+        <div className="bg-card rounded-2xl shadow-sm p-4 mt-4">
         {/* Sort */}
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
