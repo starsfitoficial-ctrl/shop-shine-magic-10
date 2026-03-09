@@ -5,7 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -13,15 +13,25 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import StoreFooter from "@/components/store/StoreFooter";
 import { openWhatsApp } from "@/lib/whatsapp";
+import CartDrawer from "@/components/store/CartDrawer";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const ProductPage = () => {
   const { storeSlug, productSlug } = useParams<{ storeSlug: string; productSlug: string }>();
   const { data: store } = useStoreBySlug(storeSlug);
   const { data: product, isLoading } = useProductBySlug(store?.id, productSlug);
-  const { addItem, setStoreSlug } = useCart();
+  const { items, addItem, setStoreSlug } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [showPulse, setShowPulse] = useState(true);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
