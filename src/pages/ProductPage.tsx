@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useStoreBySlug, useProductBySlug } from "@/hooks/useStore";
+import { useStoreBySlug, useProductBySlug, useRelatedProducts } from "@/hooks/useStore";
 import { useProductOptionGroups, useProductRatings, useProductLikes, useToggleLike } from "@/hooks/useProductDetails";
 import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
@@ -36,6 +36,7 @@ const ProductPage = () => {
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
   const { data: likesData } = useProductLikes(product?.id);
+  const { data: relatedProducts } = useRelatedProducts(store?.id, product?.id);
   const toggleLike = useToggleLike(product?.id ?? "");
 
   const avgRating = ratings && ratings.length > 0
@@ -324,6 +325,31 @@ const ProductPage = () => {
                 <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
               )}
 
+              {/* Informações adicionais (Frete, Garantia, Entrega) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 border-y py-4 my-4">
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="16" height="16" x="4" y="4" rx="2" ry="2"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 14h.01"/><path d="M8 18h8"/><path d="M8 6h8"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Frete Grátis</span>
+                  <span className="text-xs text-muted-foreground mt-1">Para sua região</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Garantia</span>
+                  <span className="text-xs text-muted-foreground mt-1">30 dias de cobertura</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Entrega Rápida</span>
+                  <span className="text-xs text-muted-foreground mt-1">Em até 2 dias úteis</span>
+                </div>
+              </div>
+
               <Button size="lg" className="w-full text-lg" onClick={handleAddToCart} disabled={outOfStock}>
                 <ShoppingBag className="mr-2 h-5 w-5" />
                 {outOfStock ? "Produto Esgotado" : "Adicionar à Sacola"}
@@ -353,6 +379,35 @@ const ProductPage = () => {
               )}
             </div>
           </div>
+
+          {/* Produtos Relacionados */}
+          {relatedProducts && relatedProducts.length > 0 && (
+            <div className="mt-12 border-t pt-8">
+              <h2 className="text-xl font-bold text-foreground mb-6">Você também pode gostar</h2>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                {relatedProducts.map((relatedProduct) => {
+                  const relatedImages = relatedProduct.images && relatedProduct.images.length > 0 ? relatedProduct.images : ["/placeholder.svg"];
+                  const outOfStock = (relatedProduct.stock ?? 0) <= 0;
+                  return (
+                    <Link key={relatedProduct.id} to={`/${storeSlug}/p/${relatedProduct.slug}`} className="group relative rounded-lg border border-border bg-card overflow-hidden hover:shadow-md transition-all">
+                      <div className="aspect-square bg-muted p-4 relative">
+                        <img src={relatedImages[0]} alt={relatedProduct.name} className="h-full w-full object-contain mix-blend-multiply transition-transform group-hover:scale-105" />
+                        {outOfStock && (
+                          <Badge variant="secondary" className="absolute top-2 left-2 text-[10px]">ESGOTADO</Badge>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <h3 className="font-medium text-sm line-clamp-2 text-foreground">{relatedProduct.name}</h3>
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="font-bold text-primary">R$ {relatedProduct.price.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         <StoreFooter storeSlug={storeSlug!} storeName={store.name} />

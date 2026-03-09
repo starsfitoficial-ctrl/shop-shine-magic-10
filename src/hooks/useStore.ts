@@ -78,6 +78,25 @@ export const useProductBySlug = (storeId: string | undefined, productSlug: strin
   });
 };
 
+export const useRelatedProducts = (storeId: string | undefined, excludeProductId: string | undefined, limit: number = 4) => {
+  return useQuery({
+    queryKey: ["related_products", storeId, excludeProductId, limit],
+    queryFn: async () => {
+      if (!storeId) throw new Error("No store");
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name, slug, price, images, stock")
+        .eq("store_id", storeId)
+        .eq("is_active", true)
+        .neq("id", excludeProductId ?? "")
+        .limit(limit);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!storeId && !!excludeProductId,
+  });
+};
+
 export const useStoreSettings = (storeId: string | undefined) => {
   return useQuery({
     queryKey: ["store_settings", storeId],
