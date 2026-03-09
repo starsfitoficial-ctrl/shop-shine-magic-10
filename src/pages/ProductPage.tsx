@@ -215,6 +215,15 @@ const ProductPage = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Images */}
+            <div>
+              <div className="relative aspect-square overflow-hidden rounded-lg border bg-card">
+                <img src={images[selectedImage]} alt={product.name} className="h-full w-full object-cover" />
+                {outOfStock && (
+                  <Badge variant="destructive" className="absolute right-2 top-2">Esgotado</Badge>
+                )}
               </div>
               {images.length > 1 && (
                 <div className="mt-3 flex gap-2 overflow-x-auto">
@@ -235,11 +244,6 @@ const ProductPage = () => {
 
             {/* Info */}
             <div className="space-y-4">
-              {product.categories && (
-                <p className="text-sm text-muted-foreground">
-                  {(product.categories as any).icon} {(product.categories as any).name}
-                </p>
-              )}
               <h1 className="text-2xl font-bold text-foreground">{product.name}</h1>
 
               {/* Rating & Actions row */}
@@ -260,7 +264,7 @@ const ProductPage = () => {
                     size="icon"
                     onClick={handleLike}
                     title="Curtir"
-                    className={likesData?.liked ? "text-red-500" : ""}
+                    className={likesData?.liked ? "text-destructive" : ""}
                   >
                     <Heart className={`h-4 w-4 ${likesData?.liked ? "fill-current" : ""}`} />
                   </Button>
@@ -360,13 +364,16 @@ const ProductPage = () => {
           </div>
           <button
             onClick={() => openWhatsApp(store.whatsapp, "Olá! Vim pelo catálogo online e gostaria de mais informações.")}
-            className={`flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl ${showPulse ? "animate-pulse" : ""}`}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl"
             aria-label="Falar com a loja no WhatsApp"
           >
             <MessageCircle className="h-6 w-6" />
           </button>
         </div>
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} store={store} />
     </>
   );
 };
