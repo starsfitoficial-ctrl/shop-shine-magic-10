@@ -16,7 +16,7 @@ const CategoryCarousel = ({ categories, selectedCategory, onSelect }: CategoryCa
           className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
             selectedCategory === null
               ? ""
-              : "bg-white border border-gray-200 text-gray-600"
+              : "bg-card border border-border text-foreground"
           }`}
           style={selectedCategory === null ? { backgroundColor: 'var(--store-primary-hex)', color: 'white' } : undefined}
         >
