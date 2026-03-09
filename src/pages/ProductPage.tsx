@@ -36,6 +36,7 @@ const ProductPage = () => {
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
   const { data: likesData } = useProductLikes(product?.id);
+  const { data: relatedProducts } = useRelatedProducts(store?.id, product?.id);
   const toggleLike = useToggleLike(product?.id ?? "");
 
   const avgRating = ratings && ratings.length > 0
