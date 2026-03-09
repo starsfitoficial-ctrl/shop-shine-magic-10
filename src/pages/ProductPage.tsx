@@ -378,6 +378,38 @@ const ProductPage = () => {
               )}
             </div>
           </div>
+
+          {/* Produtos Relacionados */}
+          {store.products && store.products.length > 1 && (
+            <div className="mt-12 border-t pt-8">
+              <h2 className="text-xl font-bold text-foreground mb-6">Você também pode gostar</h2>
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                {store.products
+                  .filter((p: any) => p.id !== product.id && p.is_active !== false)
+                  .slice(0, 4)
+                  .map((relatedProduct: any) => {
+                    const relatedImages = relatedProduct.images && relatedProduct.images.length > 0 ? relatedProduct.images : ["/placeholder.svg"];
+                    const outOfStock = (relatedProduct.stock ?? 0) <= 0;
+                    return (
+                      <Link key={relatedProduct.id} to={`/${storeSlug}/p/${relatedProduct.slug}`} className="group relative rounded-lg border border-border bg-card overflow-hidden hover:shadow-md transition-all">
+                        <div className="aspect-square bg-muted p-4 relative">
+                          <img src={relatedImages[0]} alt={relatedProduct.name} className="h-full w-full object-contain mix-blend-multiply transition-transform group-hover:scale-105" />
+                          {outOfStock && (
+                            <span className="absolute top-2 left-2 bg-gray-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">ESGOTADO</span>
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <h3 className="font-medium text-sm line-clamp-2 text-foreground">{relatedProduct.name}</h3>
+                          <div className="mt-2 flex items-center justify-between">
+                            <span className="font-bold text-primary">R$ {relatedProduct.price.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                  })}
+              </div>
+            </div>
+          )}
         </div>
 
         <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
