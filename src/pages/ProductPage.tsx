@@ -5,7 +5,7 @@ import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Share2, Heart, Star, MessageCircle, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -13,15 +13,25 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import StoreFooter from "@/components/store/StoreFooter";
 import { openWhatsApp } from "@/lib/whatsapp";
+import CartDrawer from "@/components/store/CartDrawer";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const ProductPage = () => {
   const { storeSlug, productSlug } = useParams<{ storeSlug: string; productSlug: string }>();
   const { data: store } = useStoreBySlug(storeSlug);
   const { data: product, isLoading } = useProductBySlug(store?.id, productSlug);
-  const { addItem, setStoreSlug } = useCart();
+  const { items, addItem, setStoreSlug } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [showPulse, setShowPulse] = useState(true);
+  const [cartOpen, setCartOpen] = useState(false);
 
   const { data: optionGroups } = useProductOptionGroups(product?.id);
   const { data: ratings } = useProductRatings(product?.id);
@@ -160,10 +170,51 @@ const ProductPage = () => {
 
       <div className="min-h-screen bg-background flex flex-col">
         <div className="container mx-auto max-w-4xl px-4 py-6 flex-1">
-          <Link to={`/${storeSlug}`} className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
-            Voltar para {store.name}
-          </Link>
+          {/* Header with back link and cart */}
+          <div className="flex items-center mb-4">
+            <Link to={`/${storeSlug}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+              Voltar para {store.name}
+            </Link>
+            <button onClick={() => setCartOpen(true)} className="relative ml-auto p-2">
+              <ShoppingBag className="h-6 w-6 text-foreground" />
+              {items.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {items.reduce((sum, i) => sum + i.quantity, 0)}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Breadcrumb */}
+          <Breadcrumb className="mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to={`/${storeSlug}`} className="flex items-center gap-1">
+                    <Home className="h-3.5 w-3.5" />
+                    Início
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {product.categories && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link to={`/${storeSlug}?categoria=${(product.categories as any).id}`}>
+                        {(product.categories as any).icon} {(product.categories as any).name}
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{product.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
           <div className="grid gap-8 md:grid-cols-2">
             {/* Images */}
@@ -193,11 +244,6 @@ const ProductPage = () => {
 
             {/* Info */}
             <div className="space-y-4">
-              {product.categories && (
-                <p className="text-sm text-muted-foreground">
-                  {(product.categories as any).icon} {(product.categories as any).name}
-                </p>
-              )}
               <h1 className="text-2xl font-bold text-foreground">{product.name}</h1>
 
               {/* Rating & Actions row */}
@@ -218,7 +264,7 @@ const ProductPage = () => {
                     size="icon"
                     onClick={handleLike}
                     title="Curtir"
-                    className={likesData?.liked ? "text-red-500" : ""}
+                    className={likesData?.liked ? "text-destructive" : ""}
                   >
                     <Heart className={`h-4 w-4 ${likesData?.liked ? "fill-current" : ""}`} />
                   </Button>
@@ -318,13 +364,16 @@ const ProductPage = () => {
           </div>
           <button
             onClick={() => openWhatsApp(store.whatsapp, "Olá! Vim pelo catálogo online e gostaria de mais informações.")}
-            className={`flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl ${showPulse ? "animate-pulse" : ""}`}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-lg transition-all duration-200 hover:bg-green-600 hover:shadow-xl"
             aria-label="Falar com a loja no WhatsApp"
           >
             <MessageCircle className="h-6 w-6" />
           </button>
         </div>
       </div>
+
+      {/* Cart Drawer */}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} store={store} />
     </>
   );
 };
