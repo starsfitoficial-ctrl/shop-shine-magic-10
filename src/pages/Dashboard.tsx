@@ -235,6 +235,19 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </Link>
+          <Link to="/dashboard/banners">
+            <Card className="group cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="rounded-xl bg-amber-100 p-3">
+                  <ImageIcon className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Banners</p>
+                  <p className="text-sm text-muted-foreground">Gerenciar promoções</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Chart */}
