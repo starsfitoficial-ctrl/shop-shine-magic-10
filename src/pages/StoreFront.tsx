@@ -33,10 +33,19 @@ const StoreFront = () => {
     if (store) {
       const root = document.documentElement;
       root.style.setProperty("--store-primary", hexToHsl(store.primary_color));
+      root.style.setProperty("--store-primary-hex", store.primary_color);
+      const hex = store.primary_color.replace('#', '');
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      root.style.setProperty("--store-primary-rgb", `${r}, ${g}, ${b}`);
       if (storeSlug) setStoreSlug(storeSlug);
     }
     return () => {
-      document.documentElement.style.removeProperty("--store-primary");
+      const root = document.documentElement;
+      root.style.removeProperty("--store-primary");
+      root.style.removeProperty("--store-primary-hex");
+      root.style.removeProperty("--store-primary-rgb");
     };
   }, [store, storeSlug, setStoreSlug]);
 
@@ -73,7 +82,7 @@ const StoreFront = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <Helmet>
         <title>{store.name} — Catálogo Online</title>
         <meta name="description" content={`Compre online na loja ${store.name}. Catálogo completo com checkout via WhatsApp.`} />
@@ -90,10 +99,30 @@ const StoreFront = () => {
         onSearchChange={setSearchQuery}
         onCartOpen={() => setCartOpen(true)}
       />
+
+      {/* Hero Banner */}
+      <div
+        className="w-full flex items-center px-6 md:px-12 h-32 md:h-44"
+        style={{ background: `linear-gradient(135deg, var(--store-primary-hex) 0%, rgba(var(--store-primary-rgb), 0.7) 100%)` }}
+      >
+        <div className="container mx-auto flex items-center gap-6">
+          {store.logo_url && (
+            <img src={store.logo_url} alt={store.name} className="h-16 w-16 rounded-xl object-cover shadow-md border-2 border-white/30" />
+          )}
+          <div className="flex-1">
+            <h1 className="text-2xl md:text-4xl font-extrabold text-white drop-shadow">{store.name}</h1>
+            <p className="text-white/80 text-sm mt-1">Bem-vindo à nossa loja!</p>
+          </div>
+          <div className="hidden md:flex items-center gap-2 bg-white/20 backdrop-blur rounded-full px-4 py-2">
+            <span className="text-white font-bold text-sm">{products?.length ?? 0} produtos</span>
+          </div>
+        </div>
+      </div>
       
       <main className="container mx-auto px-4 pb-20">
+        <div className="bg-white rounded-2xl shadow-sm p-4 mt-4">
         {/* Sort */}
-        <div className="my-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             {products?.length ?? 0} produto{(products?.length ?? 0) !== 1 ? "s" : ""}
           </p>
@@ -126,6 +155,7 @@ const StoreFront = () => {
           hasActiveFilter={!!selectedCategory || !!searchQuery}
           onClearFilters={() => { setSelectedCategory(null); setSearchQuery(""); }}
         />
+        </div>
       </main>
 
       <StoreFooter storeSlug={storeSlug!} storeName={store.name} />

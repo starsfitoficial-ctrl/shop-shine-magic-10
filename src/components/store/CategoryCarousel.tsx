@@ -13,11 +13,12 @@ const CategoryCarousel = ({ categories, selectedCategory, onSelect }: CategoryCa
       <div className="flex gap-2 pb-2">
         <button
           onClick={() => onSelect(null)}
-          className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
             selectedCategory === null
-              ? "border-primary bg-primary text-primary-foreground"
-              : "border-border bg-card text-foreground hover:bg-secondary"
+              ? ""
+              : "bg-white border border-gray-200 text-gray-600"
           }`}
+          style={selectedCategory === null ? { backgroundColor: 'var(--store-primary-hex)', color: 'white' } : undefined}
         >
           🏪 Todos
         </button>
@@ -25,11 +26,12 @@ const CategoryCarousel = ({ categories, selectedCategory, onSelect }: CategoryCa
           <button
             key={cat.id}
             onClick={() => onSelect(cat.id === selectedCategory ? null : cat.id)}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+            className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
               selectedCategory === cat.id
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-foreground hover:bg-secondary"
+                ? ""
+                : "bg-white border border-gray-200 text-gray-600"
             }`}
+            style={selectedCategory === cat.id ? { backgroundColor: 'var(--store-primary-hex)', color: 'white' } : undefined}
           >
             {cat.icon} {cat.name}
           </button>
