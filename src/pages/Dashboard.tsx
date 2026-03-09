@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate } from "react-router-dom";
-import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2, TrendingUp, ExternalLink } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, MousePointerClick, Settings, LogOut, Plus, Shield, Zap, Loader2, TrendingUp, ExternalLink, Image as ImageIcon } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { TrendingDown } from "lucide-react";
 import { toast } from "sonner";
@@ -231,6 +231,19 @@ const Dashboard = () => {
                 <div>
                   <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Configurações</p>
                   <p className="text-sm text-muted-foreground">Ajustar sua loja</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/dashboard/banners">
+            <Card className="group cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="rounded-xl bg-amber-100 p-3">
+                  <ImageIcon className="h-6 w-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Banners</p>
+                  <p className="text-sm text-muted-foreground">Gerenciar promoções</p>
                 </div>
               </CardContent>
             </Card>
