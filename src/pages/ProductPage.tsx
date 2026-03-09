@@ -170,19 +170,51 @@ const ProductPage = () => {
 
       <div className="min-h-screen bg-background flex flex-col">
         <div className="container mx-auto max-w-4xl px-4 py-6 flex-1">
-          <Link to={`/${storeSlug}`} className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" />
-            Voltar para {store.name}
-          </Link>
+          {/* Header with back link and cart */}
+          <div className="flex items-center mb-4">
+            <Link to={`/${storeSlug}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4" />
+              Voltar para {store.name}
+            </Link>
+            <button onClick={() => setCartOpen(true)} className="relative ml-auto p-2">
+              <ShoppingBag className="h-6 w-6 text-foreground" />
+              {items.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {items.reduce((sum, i) => sum + i.quantity, 0)}
+                </span>
+              )}
+            </button>
+          </div>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            {/* Images */}
-            <div>
-              <div className="relative aspect-square overflow-hidden rounded-lg border bg-card">
-                <img src={images[selectedImage]} alt={product.name} className="h-full w-full object-cover" />
-                {outOfStock && (
-                  <Badge variant="destructive" className="absolute right-2 top-2">Esgotado</Badge>
-                )}
+          {/* Breadcrumb */}
+          <Breadcrumb className="mb-6">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to={`/${storeSlug}`} className="flex items-center gap-1">
+                    <Home className="h-3.5 w-3.5" />
+                    Início
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              {product.categories && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link to={`/${storeSlug}?categoria=${(product.categories as any).id}`}>
+                        {(product.categories as any).icon} {(product.categories as any).name}
+                      </Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                </>
+              )}
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{product.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
               </div>
               {images.length > 1 && (
                 <div className="mt-3 flex gap-2 overflow-x-auto">
