@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
-import { useStoreBySlug, useStoreProducts, useStoreCategories } from "@/hooks/useStore";
+import { useStoreBySlug, useStoreProducts, useStoreCategories, useStoreBanners } from "@/hooks/useStore";
 import { useCart } from "@/contexts/CartContext";
 import StoreHeader from "@/components/store/StoreHeader";
 import CategoryCarousel from "@/components/store/CategoryCarousel";
 import ProductGrid from "@/components/store/ProductGrid";
 import CartDrawer from "@/components/store/CartDrawer";
 import StoreFooter from "@/components/store/StoreFooter";
+import PromoBanner from "@/components/store/PromoBanner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle } from "lucide-react";
 import { openWhatsApp } from "@/lib/whatsapp";
