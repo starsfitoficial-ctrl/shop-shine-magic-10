@@ -94,7 +94,7 @@ const ProductCard = ({ product, images, discount, outOfStock, isNew, addItem }: 
 
   return (
     <div
-      className="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden"
+      className="bg-card rounded-lg border border-border hover:shadow-lg transition-all duration-200 overflow-hidden"
       style={{ borderTop: hovered ? '2px solid var(--store-primary-hex)' : '2px solid transparent' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
