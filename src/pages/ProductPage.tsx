@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useStoreBySlug, useProductBySlug } from "@/hooks/useStore";
+import { useStoreBySlug, useProductBySlug, useRelatedProducts } from "@/hooks/useStore";
 import { useProductOptionGroups, useProductRatings, useProductLikes, useToggleLike } from "@/hooks/useProductDetails";
 import { useCart } from "@/contexts/CartContext";
 import { trackClick } from "@/lib/trackClick";
