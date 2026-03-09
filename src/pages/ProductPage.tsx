@@ -324,6 +324,31 @@ const ProductPage = () => {
                 <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
               )}
 
+              {/* Informações adicionais (Frete, Garantia, Entrega) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 border-y py-4 my-4">
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="16" height="16" x="4" y="4" rx="2" ry="2"/><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 14h.01"/><path d="M8 18h8"/><path d="M8 6h8"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Frete Grátis</span>
+                  <span className="text-xs text-muted-foreground mt-1">Para sua região</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Garantia</span>
+                  <span className="text-xs text-muted-foreground mt-1">30 dias de cobertura</span>
+                </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 bg-secondary/20 rounded-lg">
+                  <div className="bg-primary/10 p-2 rounded-full mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <span className="text-sm font-medium">Entrega Rápida</span>
+                  <span className="text-xs text-muted-foreground mt-1">Em até 2 dias úteis</span>
+                </div>
+              </div>
+
               <Button size="lg" className="w-full text-lg" onClick={handleAddToCart} disabled={outOfStock}>
                 <ShoppingBag className="mr-2 h-5 w-5" />
                 {outOfStock ? "Produto Esgotado" : "Adicionar à Sacola"}
