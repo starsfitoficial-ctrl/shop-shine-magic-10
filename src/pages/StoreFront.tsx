@@ -137,7 +137,14 @@ const StoreFront = () => {
       </div>
       
       <main className="container mx-auto px-4 pb-20">
-        <div className="bg-white rounded-2xl shadow-sm p-4 mt-4">
+        {/* Promo Banners */}
+        {banners && banners.length > 0 && (
+          <div className="mt-4">
+            <PromoBanner banners={banners} />
+          </div>
+        )}
+
+        <div className="bg-card rounded-2xl shadow-sm p-4 mt-4">
         {/* Sort */}
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
