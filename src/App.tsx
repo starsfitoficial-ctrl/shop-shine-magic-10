@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import DashboardProducts from "./pages/DashboardProducts";
 import DashboardSettings from "./pages/DashboardSettings";
+import DashboardBanners from "./pages/DashboardBanners";
 import Admin from "./pages/Admin";
 import AdminSeedDemo from "./pages/AdminSeedDemo";
 import StoreFront from "./pages/StoreFront";
