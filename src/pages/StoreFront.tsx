@@ -82,7 +82,7 @@ const StoreFront = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <Helmet>
         <title>{store.name} — Catálogo Online</title>
         <meta name="description" content={`Compre online na loja ${store.name}. Catálogo completo com checkout via WhatsApp.`} />
