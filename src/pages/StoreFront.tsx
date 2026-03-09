@@ -33,10 +33,19 @@ const StoreFront = () => {
     if (store) {
       const root = document.documentElement;
       root.style.setProperty("--store-primary", hexToHsl(store.primary_color));
+      root.style.setProperty("--store-primary-hex", store.primary_color);
+      const hex = store.primary_color.replace('#', '');
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      root.style.setProperty("--store-primary-rgb", `${r}, ${g}, ${b}`);
       if (storeSlug) setStoreSlug(storeSlug);
     }
     return () => {
-      document.documentElement.style.removeProperty("--store-primary");
+      const root = document.documentElement;
+      root.style.removeProperty("--store-primary");
+      root.style.removeProperty("--store-primary-hex");
+      root.style.removeProperty("--store-primary-rgb");
     };
   }, [store, storeSlug, setStoreSlug]);
 
