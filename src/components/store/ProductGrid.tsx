@@ -89,4 +89,53 @@ const ProductGrid = ({ products, storeSlug, loading, hasActiveFilter, onClearFil
   );
 };
 
+const ProductCard = ({ product, images, discount, outOfStock, isNew, addItem }: any) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      className="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden"
+      style={{ borderTop: hovered ? '2px solid var(--store-primary-hex)' : '2px solid transparent' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Imagem */}
+      <div className="relative bg-muted" style={{ aspectRatio: '1' }}>
+        <img src={images[0]} alt={product.name} className="w-full h-full object-contain p-2" />
+        {/* Badges */}
+        <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {discount && <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">{discount}% OFF</span>}
+          {isNew && !discount && <span className="bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded">NOVO</span>}
+          {product.is_featured && <span className="bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded">DESTAQUE</span>}
+          {outOfStock && <span className="bg-gray-600 text-white text-xs font-bold px-2 py-0.5 rounded">ESGOTADO</span>}
+        </div>
+        {/* Botão carrinho */}
+        {!outOfStock && (
+          <button
+            onClick={(e) => { e.preventDefault(); addItem({ id: product.id, name: product.name, price: product.price, image: images[0], slug: product.slug }); toast.success("Adicionado!"); }}
+            className="absolute bottom-2 right-2 rounded-full h-9 w-9 flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+            style={{ backgroundColor: 'var(--store-primary-hex)', color: 'white' }}
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+      {/* Info */}
+      <div className="p-3">
+        <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{(product.categories as any)?.name}</p>
+        <p className="text-sm font-medium text-foreground line-clamp-2 min-h-[2.5rem]">{product.name}</p>
+        <div className="mt-2">
+          {discount && product.original_price && (
+            <p className="text-xs text-muted-foreground line-through">R$ {product.original_price.toFixed(2)}</p>
+          )}
+          <p className="text-lg font-bold" style={{ color: 'var(--store-primary-hex)' }}>R$ {product.price.toFixed(2)}</p>
+          {discount && (
+            <p className="text-xs text-green-600 font-medium">Você economiza R$ {(product.original_price! - product.price).toFixed(2)}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default ProductGrid;

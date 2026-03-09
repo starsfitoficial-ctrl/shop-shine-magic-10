@@ -155,6 +155,7 @@ const StoreFront = () => {
           hasActiveFilter={!!selectedCategory || !!searchQuery}
           onClearFilters={() => { setSelectedCategory(null); setSearchQuery(""); }}
         />
+        </div>
       </main>
 
       <StoreFooter storeSlug={storeSlug!} storeName={store.name} />
