@@ -23,12 +23,28 @@ const StoreFront = () => {
   const [showPulse, setShowPulse] = useState(true);
   const { setStoreSlug } = useCart();
   const { data: categories } = useStoreCategories(store?.id);
+  const { data: banners } = useStoreBanners(store?.id);
   const { data: products, isLoading: productsLoading } = useStoreProducts(
     store?.id,
     selectedCategory,
     searchQuery,
     sortBy === "price_asc" ? "price_asc" : sortBy === "featured" ? "featured" : undefined
   );
+
+  // Dark mode: detect system preference
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const apply = (dark: boolean) => {
+      document.documentElement.classList.toggle("dark", dark);
+    };
+    apply(mq.matches);
+    const handler = (e: MediaQueryListEvent) => apply(e.matches);
+    mq.addEventListener("change", handler);
+    return () => {
+      mq.removeEventListener("change", handler);
+      document.documentElement.classList.remove("dark");
+    };
+  }, []);
 
   useEffect(() => {
     if (store) {
