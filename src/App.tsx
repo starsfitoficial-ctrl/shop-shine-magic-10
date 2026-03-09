@@ -38,6 +38,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dashboard/products" element={<DashboardProducts />} />
                 <Route path="/dashboard/settings" element={<DashboardSettings />} />
+                <Route path="/dashboard/banners" element={<DashboardBanners />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/seed-demo" element={<AdminSeedDemo />} />
                 <Route path="/:storeSlug" element={<StoreFront />} />
