@@ -1,6 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export const useStoreBanners = (storeId: string | undefined) => {
+  return useQuery({
+    queryKey: ["store_banners", storeId],
+    queryFn: async () => {
+      if (!storeId) throw new Error("No store");
+      const { data, error } = await supabase
+        .from("store_banners" as any)
+        .select("*")
+        .eq("store_id", storeId)
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      if (error) throw error;
+      return data as any[];
+    },
+    enabled: !!storeId,
+  });
+};
+
 export const useStoreBySlug = (slug: string | undefined) => {
   return useQuery({
     queryKey: ["store", slug],
