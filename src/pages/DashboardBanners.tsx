@@ -299,6 +299,8 @@ const DashboardBanners = () => {
                         className="h-8 w-8"
                         disabled={idx === banners.length - 1}
                         onClick={() => reorderMutation.mutate({ id: banner.id, direction: "down" })}
+                      >
+                        <ArrowDown className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
